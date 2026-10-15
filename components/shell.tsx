@@ -140,7 +140,11 @@ function AppSidebar({ email, photoURL, name }: ProfileProps) {
             if (isMobile) setOpenMobile(false);
           }}
         >
-          <BrandLogo className="max-w-full group-data-[collapsible=icon]:w-8" />
+          <BrandLogo className="max-w-full group-data-[collapsible=icon]:hidden" />
+          <BrandLogo
+            square
+            className="hidden w-8 group-data-[collapsible=icon]:block"
+          />
         </Link>
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">
