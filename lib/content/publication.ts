@@ -55,13 +55,14 @@ export function aboutReferences(
   id: string,
   document: AboutDocument,
   existing: string[],
+  page: "about" | "contact" = "about",
 ): string[] {
   const references = existing.filter(
-    (reference) => !["about:draft", "about:published"].includes(reference),
+    (reference) => ![`${page}:draft`, `${page}:published`].includes(reference),
   );
   if (aboutImageIds(document.draft).includes(id))
-    references.push("about:draft");
+    references.push(`${page}:draft`);
   if (aboutImageIds(document.published).includes(id))
-    references.push("about:published");
+    references.push(`${page}:published`);
   return references;
 }

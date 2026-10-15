@@ -1,0 +1,54 @@
+# Firebase App Hosting: public SDK config and server settings.
+# Admin uses Application Default Credentials supplied by App Hosting.
+# Never add GOOGLE_APPLICATION_CREDENTIALS or a private key here.
+env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyCYA7B2GtwUmUbsKW-Q33v6gVWs5Qvy6-4"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "recordings-9108f.firebaseapp.com"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "recordings-9108f"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "recordings-9108f.firebasestorage.app"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "217381042955"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:217381042955:web:5d39bc848ab1044831800e"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: FIREBASE_PROJECT_ID
+    value: "recordings-9108f"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: FIREBASE_STORAGE_BUCKET
+    value: "recordings-9108f.firebasestorage.app"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: DASHBOARD_ADMIN_EMAILS
+    value: "matiasespina1991@gmail.com"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: DASHBOARD_ORIGIN
+    value: "https://dashboard--recordings-9108f.europe-west4.hosted.app"
+    availability:
+      - BUILD
+      - RUNTIME

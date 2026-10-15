@@ -7,7 +7,7 @@ import {
 } from "../lib/content/validation.ts";
 
 const content = {
-  title: "Error404",
+  title: "22 Recordings",
   intro: "Independent label",
   body: "First paragraph.\n\nSecond paragraph.",
   imageId: null,
@@ -42,8 +42,8 @@ test("text limits and runtime types are enforced", () => {
   );
   assert.throws(() => parseAbout({ ...content, title: {} }, true));
   assert.equal(
-    parseAbout({ ...content, title: "  Error404  " }, true).title,
-    "Error404",
+    parseAbout({ ...content, title: "  22 Recordings  " }, true).title,
+    "22 Recordings",
   );
 });
 

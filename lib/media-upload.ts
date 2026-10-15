@@ -1,4 +1,4 @@
-// The gallery presentation is copied from Laura; Error404 media stays behind its session API.
+// The gallery presentation is copied from Laura; 22 Recordings media stays behind its session API.
 import { requestJson } from "@/components/client";
 import type { MediaAsset, MediaPage } from "@/lib/content/types";
 import { toGalleryMedia } from "./gallery-media";
@@ -61,7 +61,7 @@ export type MediaDoc = {
   references?: string[];
 };
 
-export const GALLERY_CHANGED = "error404:media-changed";
+export const GALLERY_CHANGED = "recordings:media-changed";
 function notifyChanged() {
   window.dispatchEvent(new Event(GALLERY_CHANGED));
 }

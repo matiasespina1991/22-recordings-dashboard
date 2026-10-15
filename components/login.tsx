@@ -57,7 +57,7 @@ export function Login() {
         </p>
       )}
       <p className="muted text-center text-xs">
-        Acceso exclusivo para las cuentas autorizadas de Error404.
+        Acceso exclusivo para las cuentas autorizadas de 22 Recordings.
       </p>
     </div>
   );

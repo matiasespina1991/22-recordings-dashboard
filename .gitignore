@@ -8,3 +8,5 @@ next-env.d.ts
 .test-build/
 
 .next-verification/
+/.local/
+**/*firebase-adminsdk*.json

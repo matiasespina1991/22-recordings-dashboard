@@ -50,9 +50,7 @@ export function parseAbout(value: unknown, publishing: boolean): AboutContent {
     throw new EditorialError("Imagen inválida.");
   if (
     publishing &&
-    (!result.title ||
-      !result.intro ||
-      !hasBodyContent(result.body, result.bodyFormat))
+    (!result.title || !hasBodyContent(result.body, result.bodyFormat))
   ) {
     throw new EditorialError(
       "Para publicar, completá título, introducción y texto.",

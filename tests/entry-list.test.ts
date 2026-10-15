@@ -62,14 +62,13 @@ test("Row summaries preserve readable text and event details use the event time 
   assert.equal(row.body, "Music & friends");
   assert.match(row.details, /2 oct 2026/);
   assert.equal(row.status, "Borrador");
-  const interview = emptyEntry("interviews", "conversation");
-  if (interview.draft.kind !== "interviews")
-    throw new Error("Expected interview");
-  interview.draft.artist = "Artist name";
+  const interview = emptyEntry("artists", "conversation");
+  if (interview.draft.kind !== "artists") throw new Error("Expected interview");
+  interview.draft.residence = "Barcelona";
   interview.draft.body = "Legacy plain text";
   interview.published = { ...interview.draft };
   const result = entryRows([interview])[0]!;
-  assert.equal(result.details, "Artist name");
+  assert.equal(result.details, "Barcelona · Orden 0");
   assert.equal(result.body, "Legacy plain text");
   assert.equal(result.status, "Publicado");
 });

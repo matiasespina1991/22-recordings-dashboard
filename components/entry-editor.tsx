@@ -2,6 +2,7 @@
 import PageContainer from "@/components/layout/page-container";
 import Link from "next/link";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -109,14 +110,14 @@ export function EntryEditor({
 
   return (
     <PageContainer
-      pageTitle={`${saved.revision ? "Editar" : "Agregar"} ${isEvent ? "evento" : "entrevista"}`}
+      pageTitle={`${saved.revision ? "Editar" : "Agregar"} ${isEvent ? "evento" : "artista"}`}
       pageDescription="Actualizá el contenido y las imágenes."
     >
       <Link
         href={`/${content.kind}`}
         className="mb-4 inline-block text-sm text-muted-foreground"
       >
-        ← {isEvent ? "Eventos" : "Entrevistas"}
+        ← {isEvent ? "Eventos" : "Agencia"}
       </Link>
       <Card className="mx-auto w-full">
         <CardContent>
@@ -131,11 +132,11 @@ export function EntryEditor({
                   <FormInput
                     control={form.control}
                     name="title"
-                    label="Título"
+                    label={isEvent ? "Título" : "Nombre del artista"}
                     placeholder={
                       isEvent
                         ? "Ingresá el título del evento"
-                        : "Ingresá el título de la entrevista"
+                        : "Ingresá el título de la artista"
                     }
                     required
                   />
@@ -153,7 +154,7 @@ export function EntryEditor({
                     placeholder={
                       isEvent
                         ? "Escribí el texto del evento..."
-                        : "Escribí la entrevista..."
+                        : "Escribí la artista..."
                     }
                     disabled={busy}
                     onRequestImage={requestImage}
@@ -305,32 +306,105 @@ export function EntryEditor({
                   ) : (
                     <div className="space-y-6">
                       <h2 className="text-lg font-semibold">
-                        Datos de la entrevista
+                        Datos de la agencia
                       </h2>
                       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <FormInput
                           control={form.control}
-                          name="artist"
-                          label="Artista"
+                          name="residence"
+                          label="Lugar de residencia"
                           required
                         />
                         <FormInput
                           control={form.control}
-                          name="interviewer"
-                          label="Entrevistador"
+                          name="rosterOrder"
+                          label="Orden en la lista"
+                          type="number"
                         />
-                        <FormInput
+                        <FormSelect
                           control={form.control}
-                          name="category"
-                          label="Categoría"
-                        />
-                        <FormDateTime
-                          control={form.control}
-                          name="publishedDate"
-                          label="Fecha de la entrevista"
-                          timeZone="Europe/Madrid"
+                          name="live"
+                          label="Formato"
+                          booleanValue
+                          options={[
+                            { value: "false", label: "DJ / otro" },
+                            { value: "true", label: "Live" },
+                          ]}
                         />
                       </div>
+                      {content.kind === "artists" && (
+                        <div className="space-y-4">
+                          <h2 className="text-lg font-semibold">
+                            Enlaces por plataforma
+                          </h2>
+                          {content.links.map((link, index) => (
+                            <div
+                              key={index}
+                              className="space-y-4 rounded-lg border p-4"
+                            >
+                              <FormSelect
+                                control={form.control}
+                                name={`links.${index}.platform`}
+                                label="Plataforma"
+                                options={[
+                                  { value: "soundcloud", label: "SoundCloud" },
+                                  { value: "youtube", label: "YouTube" },
+                                  { value: "discogs", label: "Discogs" },
+                                  { value: "instagram", label: "Instagram" },
+                                  {
+                                    value: "resident-advisor",
+                                    label: "Resident Advisor",
+                                  },
+                                ]}
+                              />
+                              <FormInput
+                                control={form.control}
+                                name={`links.${index}.url`}
+                                label="URL"
+                                type="url"
+                              />
+                              <FormInput
+                                control={form.control}
+                                name={`links.${index}.label`}
+                                label="Etiqueta (opcional)"
+                              />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() =>
+                                  form.setValue(
+                                    "links",
+                                    content.links.filter((_, n) => n !== index),
+                                    { shouldDirty: true },
+                                  )
+                                }
+                              >
+                                Eliminar enlace
+                              </Button>
+                            </div>
+                          ))}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              form.setValue(
+                                "links",
+                                [
+                                  ...content.links,
+                                  {
+                                    platform: "soundcloud",
+                                    url: "",
+                                    label: "",
+                                  },
+                                ],
+                                { shouldDirty: true },
+                              )
+                            }
+                          >
+                            Agregar enlace
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   )}
                   <FormTextarea

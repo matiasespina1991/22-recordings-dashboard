@@ -367,7 +367,9 @@ export function FileUploader(props: FileUploaderProps) {
                     <p
                       className={cn(
                         "text-muted-foreground font-medium",
-                        compact ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm",
+                        compact
+                          ? "text-[11px] sm:text-xs"
+                          : "text-xs sm:text-sm",
                       )}
                     >
                       {showPickerMenu
@@ -380,7 +382,9 @@ export function FileUploader(props: FileUploaderProps) {
                       <p
                         className={cn(
                           "text-muted-foreground/70",
-                          compact ? "text-[10px] sm:text-[11px]" : "text-[11px] sm:text-xs",
+                          compact
+                            ? "text-[10px] sm:text-[11px]"
+                            : "text-[11px] sm:text-xs",
                         )}
                       >
                         Podés subir

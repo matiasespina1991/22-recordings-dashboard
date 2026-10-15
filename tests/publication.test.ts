@@ -77,3 +77,18 @@ test("updating About does not remove other modules' media references", () => {
     ["interview:123:published"],
   );
 });
+
+test("Contact media references stay separate from About and other modules", () => {
+  const initial = emptyAbout();
+  const content = { ...initial.draft, title: "Contact", imageId: "shared" };
+  const published = nextAbout(initial, content, 0, "publish", "editor", "2026-10-15T12:00:00Z");
+  assert.deepEqual(
+    aboutReferences("shared", published, ["about:published", "contact:draft", "artists:test:published"], "contact"),
+    ["about:published", "artists:test:published", "contact:draft", "contact:published"],
+  );
+  const withdrawn = nextAbout(published, content, 1, "unpublish", "editor", "2026-10-15T13:00:00Z");
+  assert.deepEqual(
+    aboutReferences("shared", withdrawn, ["about:published", "contact:published"], "contact"),
+    ["about:published", "contact:draft"],
+  );
+});

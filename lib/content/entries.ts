@@ -2,7 +2,7 @@ import { SLUG, IMAGE_ID } from "./patterns";
 import { parseBody, hasBodyContent } from "./rich-text";
 import type { BodyFormat } from "./rich-text-format";
 // Version 1 public contract, mirrored in the independent dashboard project.
-export type ContentKind = "events" | "interviews";
+export type ContentKind = "events" | "artists";
 export type ContentImage = { id: string; alt: string };
 type CommonContent = {
   slug: string;
@@ -34,14 +34,23 @@ export type EventContent = CommonContent & {
   facebookUrl: string;
   contactEmail: string;
 };
-export type InterviewContent = CommonContent & {
-  kind: "interviews";
-  artist: string;
-  interviewer: string;
-  publishedDate: string;
-  category: string;
+export type ArtistContent = CommonContent & {
+  kind: "artists";
+  residence: string;
+  live: boolean;
+  rosterOrder: number;
+  links: {
+    platform:
+      | "soundcloud"
+      | "youtube"
+      | "discogs"
+      | "instagram"
+      | "resident-advisor";
+    url: string;
+    label: string;
+  }[];
 };
-export type ContentEntry = EventContent | InterviewContent;
+export type ContentEntry = EventContent | ArtistContent;
 export type ContentPage = {
   items: ContentEntry[];
   cursor: string | null;
@@ -58,7 +67,7 @@ export type EntryDocument = {
 };
 export { SLUG, IMAGE_ID } from "./patterns";
 export function isContentKind(value: string): value is ContentKind {
-  return value === "events" || value === "interviews";
+  return value === "events" || value === "artists";
 }
 export function emptyEntry(kind: ContentKind, slug: string): EntryDocument {
   const common = {
@@ -96,10 +105,10 @@ export function emptyEntry(kind: ContentKind, slug: string): EntryDocument {
       : {
           ...common,
           kind,
-          artist: "",
-          interviewer: "",
-          publishedDate: "",
-          category: "Conversation",
+          residence: "",
+          live: false,
+          rosterOrder: 0,
+          links: [],
         };
   return {
     schemaVersion: 1,
@@ -207,16 +216,71 @@ export function validateEntry(
       return fail("Completá las fechas antes de publicar.");
     return result ? new Date(result).toISOString() : "";
   };
-  if (kind === "interviews") {
-    const entry: InterviewContent = {
+  if (kind === "artists") {
+    if (
+      typeof data.live !== "boolean" ||
+      !Number.isSafeInteger(data.rosterOrder) ||
+      (data.rosterOrder as number) < 0
+    )
+      return fail("Formato u orden de artista inválido.");
+    if (!Array.isArray(data.links) || data.links.length > 30)
+      return fail("Máximo 30 enlaces.");
+    const domains: Record<string, string[]> = {
+      soundcloud: ["soundcloud.com"],
+      youtube: ["youtube.com", "youtu.be"],
+      discogs: ["discogs.com"],
+      instagram: ["instagram.com"],
+      "resident-advisor": ["ra.co", "residentadvisor.net"],
+    };
+    const seen = new Set<string>();
+    const links = data.links.map((item: unknown) => {
+      if (!item || typeof item !== "object") return fail("Enlace inválido.");
+      const link = item as Record<string, unknown>;
+      if (
+        typeof link.platform !== "string" ||
+        !domains[link.platform] ||
+        typeof link.url !== "string" ||
+        typeof link.label !== "string" ||
+        link.label.length > 200 ||
+        link.url.length > 2000
+      )
+        return fail("Plataforma o enlace inválido.");
+      let parsed: URL;
+      try {
+        parsed = new URL(link.url);
+      } catch {
+        return fail("Enlace inválido.");
+      }
+      if (
+        parsed.protocol !== "https:" ||
+        parsed.username ||
+        parsed.password ||
+        !domains[link.platform]!.some(
+          (domain) =>
+            parsed.hostname === domain ||
+            parsed.hostname.endsWith(`.${domain}`),
+        )
+      )
+        return fail("El enlace no corresponde a su plataforma o no usa HTTPS.");
+      const normalized = parsed.href;
+      if (seen.has(normalized)) return fail("Hay enlaces duplicados.");
+      seen.add(normalized);
+      return {
+        platform: link.platform as ArtistContent["links"][number]["platform"],
+        url: normalized,
+        label: link.label.trim(),
+      };
+    });
+    const entry: ArtistContent = {
       ...common,
       kind,
-      artist: text("artist", 160),
-      interviewer: text("interviewer", 160),
-      category: text("category", 100),
-      publishedDate: date("publishedDate"),
+      residence: text("residence", 300),
+      live: data.live,
+      rosterOrder: data.rosterOrder as number,
+      links,
     };
-    if (publishing && !entry.artist) return fail("Completá el artista.");
+    if (publishing && !entry.residence)
+      return fail("Completá el lugar de residencia.");
     return entry;
   }
   const startsAt = date("startsAt"),

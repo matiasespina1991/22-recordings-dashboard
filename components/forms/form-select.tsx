@@ -25,6 +25,7 @@ interface FormSelectProps<
   options: FormOption[];
   placeholder?: string;
   searchable?: boolean;
+  booleanValue?: boolean;
 }
 
 function FormSelect<
@@ -40,6 +41,7 @@ function FormSelect<
   placeholder = "Select an option",
   disabled,
   className,
+  booleanValue = false,
 }: FormSelectProps<TFieldValues, TName>) {
   return (
     <FormField
@@ -54,8 +56,10 @@ function FormSelect<
             </FormLabel>
           )}
           <Select
-            onValueChange={field.onChange}
-            value={field.value}
+            onValueChange={(value) =>
+              field.onChange(booleanValue ? value === "true" : value)
+            }
+            value={booleanValue ? String(field.value) : field.value}
             disabled={disabled}
           >
             <FormControl>

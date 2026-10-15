@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { editorialAuth, editorialConfigured } from "lib/content/firebase-admin";
 import { EditorialError } from "lib/content/validation";
 
-export const SESSION_COOKIE = "error404_dashboard_session";
+export const SESSION_COOKIE = "recordings_dashboard_session";
 export const SESSION_SECONDS = 60 * 60 * 24 * 5;
 
 export function isEditor(token: DecodedIdToken): boolean {

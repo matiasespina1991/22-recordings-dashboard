@@ -27,7 +27,7 @@ export function EntryList({
   const router = useRouter(),
     [slug, setSlug] = useState(""),
     [open, setOpen] = useState(false);
-  const title = kind === "events" ? "Eventos" : "Entrevistas";
+  const title = kind === "events" ? "Eventos" : "Agencia";
   return (
     <PageContainer
       scrollable={false}
@@ -36,20 +36,20 @@ export function EntryList({
       pageDescription={
         kind === "events"
           ? "Administra y agrega nuevos eventos."
-          : "Administra y agrega nuevas entrevistas."
+          : "Administra y agrega nuevas artistas."
       }
       pageHeaderAction={
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="text-xs md:text-sm">
               <IconPlus className="mr-2 h-4 w-4" />
-              {kind === "events" ? "Agregar evento" : "Agregar entrevista"}
+              {kind === "events" ? "Agregar evento" : "Agregar artista"}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {kind === "events" ? "Nuevo evento" : "Nueva entrevista"}
+                {kind === "events" ? "Nuevo evento" : "Nueva artista"}
               </DialogTitle>
               <DialogDescription>
                 Elegí la URL para abrir el editor.
@@ -75,7 +75,7 @@ export function EntryList({
                   }
                   placeholder={
                     kind === "events"
-                      ? "error404-night-01"
+                      ? "recordings-night-01"
                       : "inside-the-studio"
                   }
                   pattern="[a-z0-9]+(-[a-z0-9]+)*"

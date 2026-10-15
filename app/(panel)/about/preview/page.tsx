@@ -15,7 +15,7 @@ export default async function PreviewPage() {
         </Link>
       </div>
       <article className="mx-auto max-w-3xl">
-        <p className="eyebrow mb-4">Error404</p>
+        <p className="eyebrow mb-4">22 Recordings</p>
         <h1 className="heading mb-6">{draft.title || "Sin título"}</h1>
         <p className="mb-8 text-xl leading-relaxed text-neutral-300 whitespace-pre-line">
           {draft.intro}

@@ -63,15 +63,15 @@ test("Legacy plain text remains plain and converts to escaped editable paragraph
     "<p>One &lt;script&gt;literal&lt;/script&gt;<br>next line</p><p>Second &amp; final</p>",
   );
   assert.deepEqual(inlineImageIds(`<img src="${url}">`), []);
-  const draft = emptyEntry("interviews", "sample").draft;
+  const draft = emptyEntry("artists", "sample").draft;
   assert.equal(
-    validateEntry({ ...draft, body: text }, "interviews", "sample", false).body,
+    validateEntry({ ...draft, body: text }, "artists", "sample", false).body,
     text,
   );
   assert.equal(
     validateEntry(
       { ...draft, body: html, bodyFormat: "html" },
-      "interviews",
+      "artists",
       "sample",
       false,
     ).bodyFormat,

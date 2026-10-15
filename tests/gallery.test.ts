@@ -17,7 +17,7 @@ const asset: MediaAsset = {
   references: ["events:club-night:published"],
   status: "ready",
 };
-test("Laura gallery data uses Error404 session API and retains references and alt text", () => {
+test("Laura gallery data uses 22 Recordings session API and retains references and alt text", () => {
   const media = toGalleryMedia(asset);
   assert.equal(media.paths.original.downloadURL, "/api/media/import-example");
   assert.equal(

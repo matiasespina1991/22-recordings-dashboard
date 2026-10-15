@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 
 export function browserAuth() {
   const app =
-    getApps().find((app) => app.name === "error404-dashboard-client") ||
+    getApps().find((app) => app.name === "recordings-dashboard-client") ||
     initializeApp(
       {
         apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,7 +15,7 @@ export function browserAuth() {
         appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
         measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
       },
-      "error404-dashboard-client",
+      "recordings-dashboard-client",
     );
   return getAuth(app);
 }

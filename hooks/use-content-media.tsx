@@ -52,7 +52,7 @@ export function useEditorImages(remember: (media: MediaDoc[]) => void) {
         remember(media);
         pending.current?.(
           `/api/media/${encodeURIComponent(image.id)}`,
-          image.alt || image.title || "Imagen de Error404",
+          image.alt || image.title || "Imagen de 22 Recordings",
         );
         pending.current = null;
       }}

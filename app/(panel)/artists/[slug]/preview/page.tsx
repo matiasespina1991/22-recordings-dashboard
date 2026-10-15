@@ -9,13 +9,13 @@ export default async function Preview({
 }) {
   await requireEditorPage();
   const { slug } = await params;
-  const { draft } = await getEntry("interviews", slug);
+  const { draft } = await getEntry("artists", slug);
   return (
     <>
       <p className="message mb-8">
         Vista previa privada · Último borrador guardado
       </p>
-      <Link href={`/interviews/${slug}`}>← Volver a editar</Link>
+      <Link href={`/artists/${slug}`}>← Volver a editar</Link>
       <h1 className="heading mt-8">{draft.title || "Sin título"}</h1>
       <p className="my-6 text-xl muted">{draft.summary}</p>
       {draft.cover && (
@@ -42,9 +42,9 @@ export default async function Preview({
           </p>
         </div>
       )}
-      {draft.kind === "interviews" && (
+      {draft.kind === "artists" && (
         <p className="mb-8 muted">
-          {draft.artist} · {draft.interviewer} · {draft.publishedDate}
+          {draft.residence} · {draft.live ? "Live" : ""}
         </p>
       )}
       <RichText

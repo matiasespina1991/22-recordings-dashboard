@@ -54,8 +54,9 @@ import {
 
 const links = [
   { href: "/events", title: "Eventos", icon: CalendarDays },
-  { href: "/interviews", title: "Entrevistas", icon: Mic },
+  { href: "/artists", title: "Agencia", icon: Mic },
   { href: "/about", title: "About", icon: FileText },
+  { href: "/contact", title: "Contact", icon: FileText },
   { href: "/media", title: "Galería", icon: Images },
 ];
 
@@ -88,7 +89,7 @@ function Account({ email, photoURL, name }: ProfileProps) {
             </AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">Error404</span>
+            <span className="truncate font-semibold">22 Recordings</span>
             <span className="truncate text-xs">{email}</span>
           </div>
           <ChevronsUpDown className="ml-auto size-4" />
@@ -101,7 +102,7 @@ function Account({ email, photoURL, name }: ProfileProps) {
         sideOffset={4}
       >
         <DropdownMenuLabel className="font-normal">
-          <div className="text-sm font-medium">Error404</div>
+          <div className="text-sm font-medium">22 Recordings</div>
           <div className="text-xs text-muted-foreground">{email}</div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -133,7 +134,7 @@ function AppSidebar({ email, photoURL, name }: ProfileProps) {
       <SidebarHeader>
         <Link
           href="/"
-          aria-label="Error404 — inicio del dashboard"
+          aria-label="22 Recordings — inicio del dashboard"
           className="flex items-center rounded-md px-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-ring group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
           onClick={() => {
             if (isMobile) setOpenMobile(false);
@@ -230,7 +231,7 @@ function HeaderAccount({ email, photoURL, name }: ProfileProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
-          <p>Error404</p>
+          <p>22 Recordings</p>
           <p className="truncate text-xs font-normal text-muted-foreground">
             {email}
           </p>
@@ -341,8 +342,9 @@ export function Shell({
         <main
           id="workspace"
           className={
-            ["/media", "/about", "/events", "/interviews"].includes(path) ||
-            /^\/(events|interviews)\/[^/]+$/.test(path)
+            ["/media", "/about", "/contact", "/events", "/artists"].includes(
+              path,
+            ) || /^\/(events|artists)\/[^/]+$/.test(path)
               ? "flex min-h-0 flex-1 flex-col"
               : "flex flex-1 flex-col p-4 pt-0 md:p-6 md:pt-0"
           }

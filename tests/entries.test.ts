@@ -133,12 +133,12 @@ test("Cover/gallery refs keep other content protected while withdrawn assets los
     ["about:published", "events:night-one:draft"],
   );
 });
-test("Interview requires artist/date/cover and uses separate kind", () => {
-  const draft = emptyEntry("interviews", "conversation").draft;
+test("Artists require residence, biography and principal photo before publication", () => {
+  const draft = emptyEntry("artists", "conversation").draft;
   assert.doesNotThrow(() =>
-    validateEntry(draft, "interviews", "conversation", false),
+    validateEntry(draft, "artists", "conversation", false),
   );
-  assert.throws(() => validateEntry(draft, "interviews", "conversation", true));
+  assert.throws(() => validateEntry(draft, "artists", "conversation", true));
   assert.doesNotThrow(() =>
     validateEntry(
       {
@@ -147,12 +147,48 @@ test("Interview requires artist/date/cover and uses separate kind", () => {
         summary: "Summary",
         body: "Body",
         cover: image,
-        artist: "Artist",
-        publishedDate: "2026-10-11T12:00:00Z",
+        residence: "Barcelona, Spain",
       },
-      "interviews",
+      "artists",
       "conversation",
       true,
+    ),
+  );
+});
+test("Artist links validate platforms, HTTPS and duplicate URLs", () => {
+  const content = {
+    ...emptyEntry("artists", "artist").draft,
+    residence: "Barcelona",
+    live: true,
+    rosterOrder: 3,
+    links: [
+      {
+        platform: "soundcloud",
+        url: "https://soundcloud.com/example",
+        label: "SoundCloud",
+      },
+    ],
+  };
+  assert.doesNotThrow(() => validateEntry(content, "artists", "artist", false));
+  assert.throws(() =>
+    validateEntry(
+      {
+        ...content,
+        links: [
+          { platform: "soundcloud", url: "https://evil.example", label: "" },
+        ],
+      },
+      "artists",
+      "artist",
+      false,
+    ),
+  );
+  assert.throws(() =>
+    validateEntry(
+      { ...content, links: [...content.links, ...content.links] },
+      "artists",
+      "artist",
+      false,
     ),
   );
 });

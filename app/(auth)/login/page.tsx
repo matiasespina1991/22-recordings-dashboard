@@ -34,8 +34,8 @@ export default async function LoginPage() {
                 </p>
                 <ol className="muted list-decimal space-y-3 pl-5 text-sm leading-relaxed">
                   <li>
-                    Creá el proyecto Firebase de Error404 con Authentication,
-                    Firestore y Storage.
+                    Creá el proyecto Firebase de 22 Recordings con
+                    Authentication, Firestore y Storage.
                   </li>
                   <li>
                     Completá las variables de <code>.env.example</code> en{" "}

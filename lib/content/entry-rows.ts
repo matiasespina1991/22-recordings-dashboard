@@ -13,7 +13,7 @@ export type EntryRow = {
 
 export function entryRows(items: EntryDocument[]): EntryRow[] {
   return items.map(({ draft, published }) => {
-    const date = draft.kind === "events" ? draft.startsAt : draft.publishedDate;
+    const date = draft.kind === "events" ? draft.startsAt : "";
     const timeZone = draft.kind === "events" ? draft.timeZone : "Europe/Madrid";
     const formattedDate =
       date && Number.isFinite(Date.parse(date))
@@ -26,7 +26,11 @@ export function entryRows(items: EntryDocument[]): EntryRow[] {
       formattedDate,
       ...(draft.kind === "events"
         ? [draft.venue, draft.city, draft.country]
-        : [draft.artist]),
+        : [
+            draft.residence,
+            draft.live ? "Live" : "",
+            `Orden ${draft.rosterOrder}`,
+          ]),
     ]
       .filter(Boolean)
       .join(" · ");
@@ -60,8 +64,8 @@ export function entryRows(items: EntryDocument[]): EntryRow[] {
         details,
         body,
         status,
-        draft.kind === "interviews"
-          ? draft.interviewer
+        draft.kind === "artists"
+          ? draft.links.map((link) => link.platform).join(" ")
           : draft.lineup.join(" "),
       ]
         .join(" ")

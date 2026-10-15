@@ -31,11 +31,14 @@ export function AboutEditor({
   initial,
   initialMedia,
   selected,
+  section = "about",
 }: {
+  section?: "about" | "contact";
   initial: AboutDocument;
   initialMedia: MediaPage;
   selected: MediaAsset | null;
 }) {
+  const title = section === "about" ? "About" : "Contact";
   const [saved, setSaved] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -56,14 +59,14 @@ export function AboutEditor({
   async function save(intent: "save" | "publish" | "unpublish") {
     if (
       intent === "unpublish" &&
-      !window.confirm("¿Retirar About de la web? El borrador se conserva.")
+      !window.confirm(`¿Retirar ${title} de la web? El borrador se conserva.`)
     )
       return;
     setBusy(true);
     setMessage("");
     setError(false);
     try {
-      const next = await requestJson<AboutDocument>("/api/content/about", {
+      const next = await requestJson<AboutDocument>(`/api/content/${section}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -76,15 +79,15 @@ export function AboutEditor({
       form.reset(editorValues(next.draft));
       const message =
         intent === "publish"
-          ? "About publicado."
+          ? `${title} publicado.`
           : intent === "unpublish"
-            ? "About retirado de la web."
+            ? `${title} retirado de la web.`
             : "Borrador guardado.";
       setMessage(message);
       toast.success(message);
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "No se pudo guardar About.";
+        error instanceof Error ? error.message : `No se pudo guardar ${title}.`;
       setMessage(message);
       setError(true);
       toast.error(message);
@@ -95,13 +98,15 @@ export function AboutEditor({
 
   return (
     <PageContainer
-      pageTitle="About"
-      pageDescription="Editá el contenido de la sección About."
+      pageTitle={title}
+      pageDescription={`Editá el contenido de la sección ${title}.`}
       className="justify-self-start"
     >
       <Card className="mx-auto w-full">
         <CardHeader>
-          <CardTitle className="text-left text-2xl font-bold">About</CardTitle>
+          <CardTitle className="text-left text-2xl font-bold">
+            {title}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Form
@@ -119,13 +124,15 @@ export function AboutEditor({
                     placeholder="Ingresá el título"
                     required
                   />
-                  <FormTextarea
-                    control={form.control}
-                    name="intro"
-                    label="Introducción"
-                    placeholder="Presentá Error404..."
-                    config={{ rows: 3, maxLength: 1000 }}
-                  />
+                  {section === "about" && (
+                    <FormTextarea
+                      control={form.control}
+                      name="intro"
+                      label="Introducción"
+                      placeholder="Presentá 22 Recordings..."
+                      config={{ rows: 3, maxLength: 1000 }}
+                    />
+                  )}
                   <FormQuill
                     control={form.control}
                     name="body"
@@ -141,31 +148,33 @@ export function AboutEditor({
                     config={{ rows: 3, maxLength: 320 }}
                   />
                 </div>
-                <div className="flex min-w-0 flex-1 flex-col gap-6 lg:flex-[1]">
-                  <ContentMediaField
-                    label="Imagen"
-                    media={image ? [image] : []}
-                    disabled={busy}
-                    onChange={(media) => {
-                      remember(media);
-                      form.setValue("imageId", media[0]?.id ?? null, {
-                        shouldDirty: true,
-                      });
-                      form.setValue("imageAlt", media[0]?.alt ?? "", {
-                        shouldDirty: true,
-                      });
-                    }}
-                  />
-                  {content.imageId && (
-                    <FormInput
-                      control={form.control}
-                      name="imageAlt"
-                      label="Descripción de imagen"
-                      description="Describí lo que muestra la imagen."
-                      required
+                {section === "about" && (
+                  <div className="flex min-w-0 flex-1 flex-col gap-6 lg:flex-[1]">
+                    <ContentMediaField
+                      label="Imagen"
+                      media={image ? [image] : []}
+                      disabled={busy}
+                      onChange={(media) => {
+                        remember(media);
+                        form.setValue("imageId", media[0]?.id ?? null, {
+                          shouldDirty: true,
+                        });
+                        form.setValue("imageAlt", media[0]?.alt ?? "", {
+                          shouldDirty: true,
+                        });
+                      }}
                     />
-                  )}
-                </div>
+                    {content.imageId && (
+                      <FormInput
+                        control={form.control}
+                        name="imageAlt"
+                        label="Descripción de imagen"
+                        description="Describí lo que muestra la imagen."
+                        required
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </fieldset>
             {message && (
@@ -183,7 +192,7 @@ export function AboutEditor({
               onUndo={() => form.reset(editorValues(saved.draft))}
               onPublish={() => void save("publish")}
               onUnpublish={() => void save("unpublish")}
-              preview="/about/preview"
+              preview={`/${section}/preview`}
             />
           </Form>
         </CardContent>

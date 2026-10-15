@@ -6,8 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: {
-    default: "Error404 — Dashboard",
-    template: "%s · Error404 Dashboard",
+    default: "22 Recordings — Dashboard",
+    template: "%s · 22 Recordings Dashboard",
   },
   robots: { index: false, follow: false },
 };

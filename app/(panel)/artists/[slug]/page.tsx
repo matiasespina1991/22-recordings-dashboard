@@ -12,7 +12,7 @@ export default async function Page({
   await requireEditorPage();
   const { slug } = await params;
   const [initial, media] = await Promise.all([
-    getEntry("interviews", slug),
+    getEntry("artists", slug),
     listMedia(),
   ]);
   const selected = (

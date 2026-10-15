@@ -41,7 +41,7 @@ export const emptyAbout = (): AboutDocument => ({
   schemaVersion: 1,
   revision: 0,
   draft: {
-    title: "About Error404",
+    title: "About",
     intro: "",
     body: "",
     imageId: null,

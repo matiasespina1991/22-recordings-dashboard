@@ -3,6 +3,6 @@ import { listAllEntries } from "lib/content/entry-repository";
 import { EntryList } from "components/entry-list";
 export default async function Page() {
   await requireEditorPage();
-  const items = await listAllEntries("interviews");
-  return <EntryList kind="interviews" items={items} />;
+  const items = await listAllEntries("artists");
+  return <EntryList kind="artists" items={items} />;
 }

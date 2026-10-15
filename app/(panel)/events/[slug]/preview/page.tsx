@@ -42,9 +42,9 @@ export default async function Preview({
           </p>
         </div>
       )}
-      {draft.kind === "interviews" && (
+      {draft.kind === "artists" && (
         <p className="mb-8 muted">
-          {draft.artist} · {draft.interviewer} · {draft.publishedDate}
+          {draft.residence} · {draft.live ? "Live" : ""}
         </p>
       )}
       <RichText

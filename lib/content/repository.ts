@@ -14,14 +14,27 @@ import { nextAbout, aboutReferences, aboutImageIds } from "./publication";
 const pages = () => editorialDb().collection("content_pages");
 export const mediaCollection = () => editorialDb().collection("media_assets");
 
-export async function getAbout(): Promise<AboutDocument> {
-  const snapshot = await pages().doc("about").get();
-  return snapshot.exists ? (snapshot.data() as AboutDocument) : emptyAbout();
+export async function getAbout(
+  page: "about" | "contact" = "about",
+): Promise<AboutDocument> {
+  const snapshot = await pages().doc(page).get();
+  const defaults = emptyAbout();
+  if (!snapshot.exists) return defaults;
+  const document = snapshot.data() as AboutDocument;
+  return {
+    ...document,
+    draft: { ...defaults.draft, ...document.draft },
+    published: document.published
+      ? { ...defaults.draft, ...document.published }
+      : null,
+  };
 }
 
-export async function getPublishedAbout(): Promise<AboutContent | null> {
+export async function getPublishedAbout(
+  page: "about" | "contact" = "about",
+): Promise<AboutContent | null> {
   if (!editorialConfigured()) return null;
-  return (await getAbout()).published;
+  return (await getAbout(page)).published;
 }
 
 export async function getMedia(id: string): Promise<MediaAsset | null> {
@@ -50,10 +63,11 @@ export async function saveAbout(
   revision: number,
   intent: "save" | "publish" | "unpublish",
   uid: string,
+  page: "about" | "contact" = "about",
 ): Promise<AboutDocument> {
   const db = editorialDb();
   return db.runTransaction(async (transaction) => {
-    const ref = pages().doc("about");
+    const ref = pages().doc(page);
     const snapshot = await transaction.get(ref);
     const current = snapshot.exists
       ? (snapshot.data() as AboutDocument)
@@ -98,6 +112,7 @@ export async function saveAbout(
           asset.id,
           next,
           asset.data()?.references || [],
+          page,
         ),
       });
     }

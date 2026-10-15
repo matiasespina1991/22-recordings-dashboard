@@ -75,6 +75,40 @@ export async function listPublished(
 ): Promise<ContentPage> {
   if (!editorialConfigured())
     return { items: [], cursor: null, source: "mock" };
+  if (kind === "artists") {
+    let query = published(kind)
+      .orderBy("sortOrder", "asc")
+      .orderBy(FieldPath.documentId(), "asc")
+      .limit(25);
+    if (cursor) {
+      let decoded;
+      try {
+        decoded = JSON.parse(Buffer.from(cursor, "base64url").toString());
+      } catch {
+        throw new EditorialError("Cursor inválido.");
+      }
+      if (
+        !Array.isArray(decoded) ||
+        !Number.isSafeInteger(decoded[0]) ||
+        typeof decoded[1] !== "string"
+      )
+        throw new EditorialError("Cursor inválido.");
+      query = query.startAfter(decoded[0], checkedSlug(decoded[1]));
+    }
+    const snapshot = await query.get();
+    const docs = snapshot.docs.slice(0, 24),
+      last = docs[23];
+    return {
+      items: docs.map((doc) => doc.data().content as ContentEntry),
+      cursor:
+        snapshot.size > 24 && last
+          ? Buffer.from(
+              JSON.stringify([last.data().sortOrder, last.id]),
+            ).toString("base64url")
+          : null,
+      source: "firebase",
+    };
+  }
   const asc = kind === "events" && timeline !== "past";
   let query = published(kind)
     .orderBy("sortDate", asc ? "asc" : "desc")
@@ -181,7 +215,9 @@ export async function saveEntry(
       const item = next.published;
       transaction.set(publicRef, {
         content: item,
-        sortDate: item.kind === "events" ? item.endsAt : item.publishedDate,
+        ...(item.kind === "events"
+          ? { sortDate: item.endsAt }
+          : { sortOrder: item.rosterOrder }),
         updatedAt: next.updatedAt,
       });
     } else transaction.delete(publicRef);
