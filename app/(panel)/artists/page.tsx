@@ -1,3 +1,4 @@
+export const metadata = { title: "Agencia" };
 import { requireEditorPage } from "lib/auth/session";
 import { listAllEntries } from "lib/content/entry-repository";
 import { EntryList } from "components/entry-list";

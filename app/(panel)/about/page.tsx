@@ -1,3 +1,4 @@
+export const metadata = { title: "About" };
 import { requireEditorPage } from "lib/auth/session";
 import { getAbout, getMedia, listMedia } from "lib/content/repository";
 import { AboutEditor } from "components/about-editor";

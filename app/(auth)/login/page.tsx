@@ -1,3 +1,4 @@
+export const metadata = { title: "Acceso" };
 import { redirect } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
 import { getEditor } from "lib/auth/session";

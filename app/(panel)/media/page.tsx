@@ -1,3 +1,4 @@
+export const metadata = { title: "Medios" };
 import { requireEditorPage } from "lib/auth/session";
 import { listMedia } from "lib/content/repository";
 import { MediaLibrary } from "components/media-library";
