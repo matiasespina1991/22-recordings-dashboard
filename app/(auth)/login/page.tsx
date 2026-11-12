@@ -22,7 +22,7 @@ export default async function LoginPage() {
       <div className="relative flex min-h-dvh items-center justify-center p-4 lg:p-8">
         <div className="flex w-full max-w-md flex-col items-center justify-center space-y-6">
           <BrandLogo className="w-48" />
-          <h1 className="text-center text-lg font-bold">Hola de nuevo 👋</h1>
+          <h1 className="text-center text-lg font-bold">Hola de nuevo 👹</h1>
           <div className="w-full">
             {configured ? (
               <Login />

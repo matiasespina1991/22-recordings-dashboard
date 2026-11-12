@@ -33,11 +33,6 @@ export function EntryList({
       scrollable={false}
       className="h-[calc(100dvh-4rem)] min-h-[32rem] group-has-data-[collapsible=icon]/sidebar-wrapper:h-[calc(100dvh-3rem)]"
       pageTitle={title}
-      pageDescription={
-        kind === "events"
-          ? "Administra y agrega nuevos eventos."
-          : "Administra y agrega nuevas artistas."
-      }
       pageHeaderAction={
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>

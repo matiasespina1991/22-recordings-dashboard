@@ -111,7 +111,6 @@ export function EntryEditor({
   return (
     <PageContainer
       pageTitle={`${saved.revision ? "Editar" : "Agregar"} ${isEvent ? "evento" : "artista"}`}
-      pageDescription="Actualizá el contenido y las imágenes."
     >
       <Link
         href={`/${content.kind}`}

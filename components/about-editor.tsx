@@ -3,7 +3,7 @@ import PageContainer from "@/components/layout/page-container";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/forms/form-input";
 import { FormTextarea } from "@/components/forms/form-textarea";
@@ -97,17 +97,8 @@ export function AboutEditor({
   }
 
   return (
-    <PageContainer
-      pageTitle={title}
-      pageDescription={`Editá el contenido de la sección ${title}.`}
-      className="justify-self-start"
-    >
+    <PageContainer pageTitle={title} className="justify-self-start">
       <Card className="mx-auto w-full">
-        <CardHeader>
-          <CardTitle className="text-left text-2xl font-bold">
-            {title}
-          </CardTitle>
-        </CardHeader>
         <CardContent>
           <Form
             form={form}
