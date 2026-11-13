@@ -43,7 +43,7 @@ env:
       - BUILD
       - RUNTIME
   - variable: DASHBOARD_ADMIN_EMAILS
-    value: "matiasespina1991@gmail.com,cruz@veintidosrecordings.com,marina@veintidosrecordings.com,contact@veintidosrecordings.com"
+    value: "matiasespina1991@gmail.com,cruz@veintidosrecordings.com,marine@veintidosrecordings.com,contact@veintidosrecordings.com,robyn@veintidosrecordings.com"
     availability:
       - BUILD
       - RUNTIME
