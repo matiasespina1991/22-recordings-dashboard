@@ -170,8 +170,15 @@ export function FileUploader(props: FileUploaderProps) {
       setFiles(updatedFiles);
 
       if (rejectedFiles.length > 0) {
-        rejectedFiles.forEach(({ file }) => {
-          toast.error(`El archivo ${file.name} fue rechazado.`);
+        rejectedFiles.forEach(({ file, errors }) => {
+          const tooLarge = errors.some(
+            (error) => error.code === "file-too-large",
+          );
+          toast.error(
+            tooLarge
+              ? `El archivo ${file.name} supera el límite de ${formatBytes(maxSize)}.`
+              : `El archivo ${file.name} fue rechazado.`,
+          );
         });
       }
 
@@ -200,12 +207,18 @@ export function FileUploader(props: FileUploaderProps) {
               });
             }
           })
-          .catch(() => {
+          .catch((error: unknown) => {
             if (uploadToastIdRef.current) {
-              toast.error(`Falló la subida de ${target}.`, {
-                id: uploadToastIdRef.current,
-              });
+              toast.error(
+                error instanceof Error
+                  ? error.message
+                  : `Falló la subida de ${target}.`,
+                {
+                  id: uploadToastIdRef.current,
+                },
+              );
             }
+            setFiles([]);
           })
           .finally(() => {
             uploadToastIdRef.current = null;

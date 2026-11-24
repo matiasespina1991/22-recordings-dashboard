@@ -30,6 +30,7 @@ import { uploadMediaFiles, type MediaDoc } from "@/lib/media-upload";
 import { toGalleryMedia } from "@/lib/gallery-media";
 import { generateAltText } from "@/lib/auto-alt-text";
 import { toast } from "sonner";
+import { MAX_IMAGE_SOURCE_BYTES } from "@/lib/image-upload";
 
 export function ContentMediaField({
   label,
@@ -38,6 +39,7 @@ export function ContentMediaField({
   max = 1,
   disabled = false,
   contextName,
+  onAltChange,
 }: {
   label: string;
   media: MediaDoc[];
@@ -45,6 +47,7 @@ export function ContentMediaField({
   max?: number;
   disabled?: boolean;
   contextName?: string;
+  onAltChange: (id: string, alt: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [progresses, setProgresses] = useState<Record<string, number>>({});
@@ -72,10 +75,7 @@ export function ContentMediaField({
       return;
     }
 
-    const updatedMedia = media.map((m) =>
-      m.id === item.id ? { ...m, alt: suggestedAlt } : m
-    );
-    onChange(updatedMedia);
+    onAltChange(item.id, suggestedAlt);
     toast.success("Descripción sugerida");
   };
 
@@ -113,6 +113,7 @@ export function ContentMediaField({
             <MediaPreviewCard
               media={item}
               onRemove={() => remove(item.id)}
+              onAltUpdate={(alt) => onAltChange(item.id, alt)}
             />
             {contextName && !item.alt && (
               <Tooltip>
@@ -146,6 +147,7 @@ export function ContentMediaField({
                   <SortableAttachmentCard
                     media={item}
                     onRemove={() => remove(item.id)}
+                    onAltUpdate={(alt) => onAltChange(item.id, alt)}
                   />
                   {contextName && !item.alt && (
                     <Tooltip>
@@ -188,7 +190,7 @@ export function ContentMediaField({
           "image/gif": [],
         }}
         maxFiles={max === 1 ? 1 : Math.max(1, Math.min(10, max - media.length))}
-        maxSize={5 * 1024 * 1024}
+        maxSize={MAX_IMAGE_SOURCE_BYTES}
         multiple={max > 1}
         disabled={disabled || (max > 1 && media.length >= max)}
         onPickFromGallery={() => setOpen(true)}

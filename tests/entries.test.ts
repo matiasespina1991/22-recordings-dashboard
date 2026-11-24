@@ -71,17 +71,49 @@ test("Events normalize offsets to UTC and reject reversed or missing-zone dates"
     ),
   );
 });
-test("Reject active URL schemes, missing alt, invalid timezone and changed slugs", () => {
+test("Reject active URL schemes, invalid timezone and changed slugs", () => {
   for (const patch of [
     { ticketUrl: "javascript:alert(1)" },
     { startsAt: "2026-02-31T20:00:00Z" },
-    { cover: { ...image, alt: "" } },
     { timeZone: "Not/AZone" },
     { slug: "other" },
   ])
     assert.throws(() =>
       validateEntry({ ...valid(), ...patch }, "events", "night-one", true),
     );
+});
+test("Missing image descriptions use the title without replacing custom descriptions", () => {
+  const input = {
+    ...valid(),
+    title: "  Night  ",
+    cover: { ...image, alt: "" },
+    gallery: [
+      { ...image, alt: "  " },
+      { ...image, alt: "Crowd" },
+    ],
+  };
+  const result = validateEntry(input, "events", "night-one", true);
+  assert.equal(result.cover?.alt, "Night");
+  assert.deepEqual(
+    result.gallery.map((photo) => photo.alt),
+    ["Night", "Crowd"],
+  );
+  const draft = {
+    ...emptyEntry("artists", "artist").draft,
+    cover: { ...image, alt: "" },
+  };
+  assert.equal(validateEntry(draft, "artists", "artist", false).cover?.alt, "");
+  const artist = {
+    ...draft,
+    title: "Artist",
+    summary: "Summary",
+    body: "Bio",
+    residence: "Barcelona",
+  };
+  assert.equal(
+    validateEntry(artist, "artists", "artist", true).cover?.alt,
+    "Artist",
+  );
 });
 test("Publish/save/unpublish preserve public snapshot and detect concurrent edits", () => {
   const current = emptyEntry("events", "night-one"),

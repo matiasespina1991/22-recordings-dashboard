@@ -11,7 +11,15 @@ import type { MediaAsset } from "lib/content/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SUPPORTED_FORMATS = ["jpeg", "png", "webp", "heic", "avif", "gif"];
+const SUPPORTED_FORMATS = [
+  "jpeg",
+  "png",
+  "webp",
+  "heic",
+  "heif",
+  "avif",
+  "gif",
+];
 
 export async function GET(request: Request) {
   try {
@@ -42,14 +50,14 @@ export async function POST(request: Request) {
     let image: Buffer, thumbnail: Buffer;
     try {
       const metadata = await sharp(input, {
-        limitInputPixels: 20000000,
+        limitInputPixels: 50000000,
       }).metadata();
       if (
         !SUPPORTED_FORMATS.includes(metadata.format || "") ||
         (metadata.pages || 1) > 1
       )
         throw new Error("Unsupported image");
-      image = await sharp(input, { limitInputPixels: 20000000 })
+      image = await sharp(input, { limitInputPixels: 50000000 })
         .rotate()
         .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
         .webp({ quality: 70 })

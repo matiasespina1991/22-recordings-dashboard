@@ -27,7 +27,6 @@ import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { bodyAsHtml } from "@/lib/content/rich-text-format";
 import type { ContentEntry, EntryDocument } from "@/lib/content/entries";
 import type { MediaAsset, MediaPage } from "@/lib/content/types";
-import type { MediaDoc } from "@/lib/media-upload";
 import { requestJson } from "./client";
 
 const editorValues = (content: ContentEntry): ContentEntry => ({
@@ -56,10 +55,17 @@ export function EntryEditor({
   const isEvent = content.kind === "events";
   const { items, remember } = useContentMedia(initialMedia, selected);
   const { requestImage, dialog } = useEditorImages(remember);
-  const cover = content.cover ? items.get(content.cover.id) : undefined;
+  const coverAsset = content.cover ? items.get(content.cover.id) : undefined;
+  const cover =
+    coverAsset && content.cover
+      ? { ...coverAsset, alt: content.cover.alt }
+      : undefined;
   const gallery = content.gallery
-    .map((image) => items.get(image.id))
-    .filter((item): item is MediaDoc => Boolean(item));
+    .map((image) => {
+      const item = items.get(image.id);
+      return item ? { ...item, alt: image.alt } : undefined;
+    })
+    .filter((item) => item !== undefined);
   const dirty = form.formState.isDirty;
   useUnsavedChanges(dirty);
 
@@ -419,6 +425,10 @@ export function EntryEditor({
                     media={cover ? [cover] : []}
                     disabled={busy}
                     contextName={content.title || undefined}
+                    onAltChange={(id, alt) => {
+                      if (content.cover?.id === id)
+                        form.setValue("cover.alt", alt, { shouldDirty: true });
+                    }}
                     onChange={(media) => {
                       remember(media);
                       const image = media[0];
@@ -429,8 +439,10 @@ export function EntryEditor({
                               id: image.id,
                               alt:
                                 content.cover?.id === image.id
-                                  ? content.cover.alt
-                                  : (image.alt ?? ""),
+                                  ? content.cover.alt ||
+                                    image.alt ||
+                                    content.title
+                                  : image.alt || content.title,
                             }
                           : null,
                         { shouldDirty: true },
@@ -442,7 +454,7 @@ export function EntryEditor({
                       control={form.control}
                       name="cover.alt"
                       label="Descripción de portada"
-                      required
+                      placeholder="Se completa automáticamente con el título."
                     />
                   )}
                   <ContentMediaField
@@ -451,6 +463,15 @@ export function EntryEditor({
                     max={12}
                     disabled={busy}
                     contextName={content.title || undefined}
+                    onAltChange={(id, alt) => {
+                      const index = content.gallery.findIndex(
+                        (image) => image.id === id,
+                      );
+                      if (index >= 0)
+                        form.setValue(`gallery.${index}.alt`, alt, {
+                          shouldDirty: true,
+                        });
+                    }}
                     onChange={(media) => {
                       remember(media);
                       form.setValue(
@@ -460,9 +481,9 @@ export function EntryEditor({
                           alt:
                             content.gallery.find(
                               (image) => image.id === item.id,
-                            )?.alt ??
-                            item.alt ??
-                            "",
+                            )?.alt ||
+                            item.alt ||
+                            content.title,
                         })),
                         { shouldDirty: true },
                       );
@@ -474,7 +495,7 @@ export function EntryEditor({
                       control={form.control}
                       name={`gallery.${index}.alt`}
                       label={`Descripción de imagen ${index + 1}`}
-                      required
+                      placeholder="Se completa automáticamente con el título."
                     />
                   ))}
                 </div>

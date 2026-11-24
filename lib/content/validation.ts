@@ -1,5 +1,6 @@
 import { parseBody, hasBodyContent } from "./rich-text";
 import type { AboutContent } from "./types";
+import { MAX_IMAGE_UPLOAD_BYTES } from "../image-upload";
 
 export class EditorialError extends Error {
   status: number;
@@ -9,7 +10,7 @@ export class EditorialError extends Error {
   }
 }
 
-export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+export const MAX_IMAGE_BYTES = MAX_IMAGE_UPLOAD_BYTES;
 export const MEDIA_ID = /^[a-z0-9]+-[a-f0-9-]{36}$/;
 
 function text(value: unknown, label: string, limit: number): string {
@@ -56,11 +57,7 @@ export function parseAbout(value: unknown, publishing: boolean): AboutContent {
       "Para publicar, completá título, introducción y texto.",
     );
   }
-  if (publishing && result.imageId && !result.imageAlt) {
-    throw new EditorialError(
-      "Agregá una descripción para la imagen antes de publicar.",
-    );
-  }
+  if (result.imageId && !result.imageAlt) result.imageAlt = result.title;
   return result;
 }
 

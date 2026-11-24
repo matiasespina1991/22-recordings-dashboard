@@ -52,7 +52,10 @@ export function AboutEditor({
     selected ? [selected] : [],
   );
   const { requestImage, dialog } = useEditorImages(remember);
-  const image = content.imageId ? items.get(content.imageId) : undefined;
+  const imageAsset = content.imageId ? items.get(content.imageId) : undefined;
+  const image = imageAsset
+    ? { ...imageAsset, alt: content.imageAlt }
+    : undefined;
   const dirty = form.formState.isDirty;
   useUnsavedChanges(dirty);
 
@@ -145,14 +148,29 @@ export function AboutEditor({
                       label="Imagen"
                       media={image ? [image] : []}
                       disabled={busy}
+                      contextName={content.title || undefined}
+                      onAltChange={(id, alt) => {
+                        if (content.imageId === id)
+                          form.setValue("imageAlt", alt, { shouldDirty: true });
+                      }}
                       onChange={(media) => {
                         remember(media);
                         form.setValue("imageId", media[0]?.id ?? null, {
                           shouldDirty: true,
                         });
-                        form.setValue("imageAlt", media[0]?.alt ?? "", {
-                          shouldDirty: true,
-                        });
+                        form.setValue(
+                          "imageAlt",
+                          media[0]
+                            ? media[0].id === content.imageId
+                              ? content.imageAlt ||
+                                media[0].alt ||
+                                content.title
+                              : media[0].alt || content.title
+                            : "",
+                          {
+                            shouldDirty: true,
+                          },
+                        );
                       }}
                     />
                     {content.imageId && (
@@ -161,7 +179,7 @@ export function AboutEditor({
                         name="imageAlt"
                         label="Descripción de imagen"
                         description="Describí lo que muestra la imagen."
-                        required
+                        placeholder="Se completa automáticamente con el título."
                       />
                     )}
                   </div>

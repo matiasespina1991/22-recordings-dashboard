@@ -27,6 +27,11 @@ enabled in Firebase. No authentication bypass exists.
 - `/about`: introduction, rich text, image, alt and SEO fields.
 - `/media`: upload, select, rename and delete images, with usage protection.
 
+Images up to 50 MB can be selected. Files over 5 MB are resized and compressed
+in the browser before upload; the browser must support decoding their format.
+Animated GIFs are not supported. Missing image descriptions default to the
+artist's name or content title when saved; existing descriptions are preserved.
+
 Every editor has separate Save draft, Preview, Publish and Unpublish actions.
 Stale revisions return 409. Saving a draft leaves the public snapshot unchanged.
 Only published snapshots and referenced public media are exposed without login.

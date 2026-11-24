@@ -2,6 +2,7 @@
 import { requestJson } from "@/components/client";
 import type { MediaAsset, MediaPage } from "@/lib/content/types";
 import { toGalleryMedia } from "./gallery-media";
+import { prepareImageUpload } from "./image-upload";
 export type MediaOriginContext = "gallery" | "exhibition";
 export type MediaOriginRole = "gallery" | "feature" | "attachment";
 
@@ -90,7 +91,11 @@ export async function listGalleryMedia(
   return [...items.values()];
 }
 
-export async function updateGalleryMedia(media: MediaDoc, title: string, alt?: string) {
+export async function updateGalleryMedia(
+  media: MediaDoc,
+  title: string,
+  alt?: string,
+) {
   await requestJson(`/api/media/${encodeURIComponent(media.id)}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -116,9 +121,10 @@ export async function uploadMediaFiles(
   try {
     // Sequential uploads avoid spiking the server's image processing memory.
     for (const file of files) {
+      const prepared = await prepareImageUpload(file);
       const asset = await new Promise<MediaAsset>((resolve, reject) => {
         const form = new FormData();
-        form.append("file", file);
+        form.append("file", prepared);
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "/api/media");
         xhr.upload.onprogress = (event) => {

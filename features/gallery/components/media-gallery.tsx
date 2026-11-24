@@ -29,9 +29,10 @@ import {
   GALLERY_CHANGED,
 } from "@/lib/media-upload";
 import type { MediaPage as MediaPageData } from "@/lib/content/types";
+import { MAX_IMAGE_SOURCE_BYTES } from "@/lib/image-upload";
 import { toast } from "sonner";
 
-const MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
+const MAX_UPLOAD_SIZE = MAX_IMAGE_SOURCE_BYTES;
 
 function getPreviewPath(media: MediaDoc) {
   if (media.type === "video") {
@@ -488,7 +489,14 @@ function UploadCard({
         <FileUploader
           onUpload={onUpload}
           progresses={progresses}
-          accept={{ "image/jpeg": [], "image/png": [], "image/webp": [] }}
+          accept={{
+            "image/jpeg": [],
+            "image/png": [],
+            "image/webp": [],
+            "image/heic": [],
+            "image/avif": [],
+            "image/gif": [],
+          }}
           maxFiles={10}
           maxSize={MAX_UPLOAD_SIZE}
           multiple

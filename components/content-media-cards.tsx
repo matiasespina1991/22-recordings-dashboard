@@ -61,15 +61,13 @@ export function MediaPreviewCard({
       await updateGalleryMedia(
         media,
         media.title ?? media.originalFilename ?? media.id,
-        localAlt
+        localAlt,
       );
       onAltUpdate?.(localAlt);
       setIsEditingAlt(false);
       toast.success("Descripción actualizada.");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Error al guardar."
-      );
+      toast.error(error instanceof Error ? error.message : "Error al guardar.");
       setLocalAlt(media.alt ?? "");
     } finally {
       setIsSaving(false);
@@ -180,7 +178,10 @@ export function MediaPreviewCard({
                 type="button"
                 size="icon"
                 variant="ghost"
-                onClick={() => setIsEditingAlt(true)}
+                onClick={() => {
+                  setLocalAlt(media.alt ?? "");
+                  setIsEditingAlt(true);
+                }}
                 className="shrink-0"
               >
                 <IconPencil className="h-4 w-4" />

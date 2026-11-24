@@ -144,6 +144,7 @@ export function validateEntry(
       return fail(`Revisá ${key} (máximo ${max} caracteres).`);
     return value.trim();
   };
+  const title = text("title", 160);
   const image = (value: unknown): ContentImage => {
     if (!value || typeof value !== "object") return fail("Imagen inválida.");
     const item = value as Record<string, unknown>;
@@ -154,15 +155,16 @@ export function validateEntry(
       item.alt.length > 300
     )
       return fail("Imagen inválida.");
-    if (publishing && !item.alt.trim())
+    const alt = item.alt.trim() || title;
+    if (publishing && !alt)
       return fail("Agregá una descripción a cada imagen.");
-    return { id: item.id, alt: item.alt.trim() };
+    return { id: item.id, alt };
   };
   if (!Array.isArray(data.gallery) || data.gallery.length > 12)
     return fail("Máximo 12 imágenes en la galería.");
   const common = {
     slug,
-    title: text("title", 160),
+    title,
     summary: text("summary", 1000),
     ...parseBody(data.body, data.bodyFormat),
     seoDescription: text("seoDescription", 320),
