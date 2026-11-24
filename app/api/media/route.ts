@@ -52,11 +52,11 @@ export async function POST(request: Request) {
       image = await sharp(input, { limitInputPixels: 20000000 })
         .rotate()
         .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
-        .webp({ quality: 85 })
+        .webp({ quality: 70 })
         .toBuffer();
       thumbnail = await sharp(image)
         .resize(320, 320, { fit: "inside", withoutEnlargement: true })
-        .webp({ quality: 75 })
+        .webp({ quality: 65 })
         .toBuffer();
     } catch {
       throw new EditorialError(
