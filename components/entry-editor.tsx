@@ -418,6 +418,7 @@ export function EntryEditor({
                     label="Imagen principal"
                     media={cover ? [cover] : []}
                     disabled={busy}
+                    contextName={content.title || undefined}
                     onChange={(media) => {
                       remember(media);
                       const image = media[0];
@@ -449,6 +450,7 @@ export function EntryEditor({
                     media={gallery}
                     max={12}
                     disabled={busy}
+                    contextName={content.title || undefined}
                     onChange={(media) => {
                       remember(media);
                       form.setValue(

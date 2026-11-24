@@ -90,11 +90,11 @@ export async function listGalleryMedia(
   return [...items.values()];
 }
 
-export async function updateGalleryMedia(media: MediaDoc, title: string) {
+export async function updateGalleryMedia(media: MediaDoc, title: string, alt?: string) {
   await requestJson(`/api/media/${encodeURIComponent(media.id)}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: title, alt: media.alt ?? "" }),
+    body: JSON.stringify({ name: title, alt: alt ?? media.alt ?? "" }),
   });
   notifyChanged();
 }

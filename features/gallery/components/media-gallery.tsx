@@ -31,7 +31,7 @@ import {
 import type { MediaPage as MediaPageData } from "@/lib/content/types";
 import { toast } from "sonner";
 
-const MAX_UPLOAD_SIZE = 3 * 1024 * 1024;
+const MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
 
 function getPreviewPath(media: MediaDoc) {
   if (media.type === "video") {

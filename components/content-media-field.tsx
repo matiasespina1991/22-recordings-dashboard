@@ -16,6 +16,11 @@ import {
 } from "@dnd-kit/sortable";
 import { FileUploader } from "@/components/file-uploader";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import MediaPickerDialog from "@/components/media-picker-dialog";
 import {
   MediaPreviewCard,
@@ -23,6 +28,8 @@ import {
 } from "@/components/content-media-cards";
 import { uploadMediaFiles, type MediaDoc } from "@/lib/media-upload";
 import { toGalleryMedia } from "@/lib/gallery-media";
+import { generateAltText } from "@/lib/auto-alt-text";
+import { toast } from "sonner";
 
 export function ContentMediaField({
   label,
@@ -30,12 +37,14 @@ export function ContentMediaField({
   onChange,
   max = 1,
   disabled = false,
+  contextName,
 }: {
   label: string;
   media: MediaDoc[];
   onChange: (media: MediaDoc[]) => void;
   max?: number;
   disabled?: boolean;
+  contextName?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [progresses, setProgresses] = useState<Record<string, number>>({});
@@ -45,14 +54,31 @@ export function ContentMediaField({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+
   const remove = (id: string) =>
     onChange(media.filter((item) => item.id !== id));
+
   const reorder = ({ active, over }: DragEndEvent) => {
     if (disabled || !over || active.id === over.id) return;
     const from = media.findIndex((item) => item.id === active.id),
       to = media.findIndex((item) => item.id === over.id);
     if (from >= 0 && to >= 0) onChange(arrayMove(media, from, to));
   };
+
+  const handleAutoGenerateAlt = async (item: MediaDoc) => {
+    const suggestedAlt = generateAltText(item.title, contextName, undefined);
+    if (!suggestedAlt) {
+      toast.info("No hay información para generar una descripción.");
+      return;
+    }
+
+    const updatedMedia = media.map((m) =>
+      m.id === item.id ? { ...m, alt: suggestedAlt } : m
+    );
+    onChange(updatedMedia);
+    toast.success("Descripción sugerida");
+  };
+
   async function upload(files: File[]) {
     const assets = await uploadMediaFiles(
       files,
@@ -65,6 +91,7 @@ export function ContentMediaField({
       max === 1 ? uploaded.slice(0, 1) : [...media, ...uploaded].slice(0, max),
     );
   }
+
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-3">
@@ -82,11 +109,30 @@ export function ContentMediaField({
       </div>
       {max === 1 ? (
         media.map((item) => (
-          <MediaPreviewCard
-            key={item.id}
-            media={item}
-            onRemove={() => remove(item.id)}
-          />
+          <div key={item.id} className="space-y-2">
+            <MediaPreviewCard
+              media={item}
+              onRemove={() => remove(item.id)}
+            />
+            {contextName && !item.alt && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs h-8"
+                    onClick={() => handleAutoGenerateAlt(item)}
+                  >
+                    ✨ Generar descripción con {contextName}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Auto-generar descripción usando el nombre del artista/evento
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
         ))
       ) : media.length ? (
         <DndContext sensors={sensors} onDragEnd={reorder}>
@@ -96,11 +142,31 @@ export function ContentMediaField({
           >
             <div className="flex flex-col gap-3">
               {media.map((item) => (
-                <SortableAttachmentCard
-                  key={item.id}
-                  media={item}
-                  onRemove={() => remove(item.id)}
-                />
+                <div key={item.id} className="space-y-2">
+                  <SortableAttachmentCard
+                    media={item}
+                    onRemove={() => remove(item.id)}
+                  />
+                  {contextName && !item.alt && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs h-8"
+                          onClick={() => handleAutoGenerateAlt(item)}
+                        >
+                          ✨ Generar descripción con {contextName}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Auto-generar descripción usando el nombre del
+                        artista/evento
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </div>
               ))}
             </div>
           </SortableContext>
@@ -113,9 +179,16 @@ export function ContentMediaField({
       <FileUploader
         onUpload={upload}
         progresses={progresses}
-        accept={{ "image/jpeg": [], "image/png": [], "image/webp": [] }}
+        accept={{
+          "image/jpeg": [],
+          "image/png": [],
+          "image/webp": [],
+          "image/heic": [],
+          "image/avif": [],
+          "image/gif": [],
+        }}
         maxFiles={max === 1 ? 1 : Math.max(1, Math.min(10, max - media.length))}
-        maxSize={3 * 1024 * 1024}
+        maxSize={5 * 1024 * 1024}
         multiple={max > 1}
         disabled={disabled || (max > 1 && media.length >= max)}
         onPickFromGallery={() => setOpen(true)}

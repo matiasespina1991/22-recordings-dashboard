@@ -9,7 +9,7 @@ export class EditorialError extends Error {
   }
 }
 
-export const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
+export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 export const MEDIA_ID = /^[a-z0-9]+-[a-f0-9-]{36}$/;
 
 function text(value: unknown, label: string, limit: number): string {

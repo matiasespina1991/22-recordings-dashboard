@@ -11,6 +11,8 @@ import type { MediaAsset } from "lib/content/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const SUPPORTED_FORMATS = ["jpeg", "png", "webp", "heic", "avif", "gif"];
+
 export async function GET(request: Request) {
   try {
     await requireEditor();
@@ -35,7 +37,7 @@ export async function POST(request: Request) {
     }).formData();
     const file = form.get("file");
     if (!(file instanceof File) || file.size < 1 || file.size > MAX_IMAGE_BYTES)
-      throw new EditorialError("Elegí una imagen de hasta 3 MB.");
+      throw new EditorialError("Elegí una imagen de hasta 5 MB.");
     const input = Buffer.from(await file.arrayBuffer());
     let image: Buffer, thumbnail: Buffer;
     try {
@@ -43,7 +45,7 @@ export async function POST(request: Request) {
         limitInputPixels: 20000000,
       }).metadata();
       if (
-        !["jpeg", "png", "webp"].includes(metadata.format || "") ||
+        !SUPPORTED_FORMATS.includes(metadata.format || "") ||
         (metadata.pages || 1) > 1
       )
         throw new Error("Unsupported image");
@@ -58,7 +60,7 @@ export async function POST(request: Request) {
         .toBuffer();
     } catch {
       throw new EditorialError(
-        "La imagen no es válida. Usá JPG, PNG o WebP sin animación.",
+        "La imagen no es válida. Usá JPG, PNG, WebP, HEIC, AVIF o GIF sin animación.",
       );
     }
     const metadata = await sharp(image).metadata();
