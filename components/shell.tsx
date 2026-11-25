@@ -14,6 +14,7 @@ import {
   LogOut,
   ChevronsUpDown,
   Store,
+  AtSign,
 } from "lucide-react";
 import { requestJson } from "./client";
 import {
@@ -56,7 +57,7 @@ const links = [
   { href: "/events", title: "Eventos", icon: CalendarDays },
   { href: "/artists", title: "Agencia", icon: Mic },
   { href: "/about", title: "About", icon: FileText },
-  { href: "/contact", title: "Contact", icon: FileText },
+  { href: "/contact", title: "Contact", icon: AtSign },
   { href: "/media", title: "Galería", icon: Images },
 ];
 

@@ -1,3 +1,4 @@
+import { parseTranslations } from "./translations";
 import { parseBody, hasBodyContent } from "./rich-text";
 import type { AboutContent } from "./types";
 import { MAX_IMAGE_UPLOAD_BYTES } from "../image-upload";
@@ -34,7 +35,16 @@ export function parseAbout(value: unknown, publishing: boolean): AboutContent {
       error instanceof Error ? error.message : "Texto inválido.",
     );
   }
+  let translations;
+  try {
+    translations = parseTranslations(data.translations);
+  } catch (error) {
+    throw new EditorialError(
+      error instanceof Error ? error.message : "Traducción inválida.",
+    );
+  }
   const result: AboutContent = {
+    ...(translations ? { translations } : {}),
     title: text(data.title, "Título", 160),
     intro: text(data.intro, "Introducción", 1000),
     ...body,

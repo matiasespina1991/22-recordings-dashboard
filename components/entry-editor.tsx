@@ -1,4 +1,5 @@
 "use client";
+import { EnglishFields } from "./english-fields";
 import PageContainer from "@/components/layout/page-container";
 import Link from "next/link";
 import { useState } from "react";
@@ -33,6 +34,16 @@ const editorValues = (content: ContentEntry): ContentEntry => ({
   ...content,
   body: bodyAsHtml(content.body, content.bodyFormat),
   bodyFormat: "html",
+  translations: {
+    en: {
+      ...content.translations?.en,
+      body: bodyAsHtml(
+        content.translations?.en?.body || "",
+        content.translations?.en?.bodyFormat,
+      ),
+      bodyFormat: "html",
+    },
+  },
 });
 
 export function EntryEditor({
@@ -132,6 +143,9 @@ export function EntryEditor({
             className="space-y-8"
           >
             <fieldset disabled={busy} className="min-w-0 space-y-8">
+              <p className="text-sm text-muted-foreground">
+                Contenido principal · Español
+              </p>
               <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
                 <div className="flex min-w-0 flex-1 flex-col gap-6 lg:flex-[3]">
                   <FormInput
@@ -500,6 +514,28 @@ export function EntryEditor({
                   ))}
                 </div>
               </div>
+              <EnglishFields
+                value={content.translations?.en || {}}
+                page={false}
+                artist={!isEvent}
+                disabled={busy}
+                onChange={(value) =>
+                  form.setValue(
+                    "translations",
+                    { en: value },
+                    { shouldDirty: true },
+                  )
+                }
+              >
+                <FormQuill
+                  control={form.control}
+                  name="translations.en.body"
+                  label="Texto principal · EN"
+                  placeholder="Escribí la traducción al inglés..."
+                  disabled={busy}
+                  onRequestImage={requestImage}
+                />
+              </EnglishFields>
             </fieldset>
             {message && (
               <p

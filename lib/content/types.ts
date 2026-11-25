@@ -1,5 +1,6 @@
+import type { Translatable } from "./translations";
 import type { BodyFormat } from "./rich-text-format";
-export type AboutContent = {
+export type AboutContent = Translatable & {
   title: string;
   intro: string;
   body: string;

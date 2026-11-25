@@ -1,3 +1,4 @@
+import { translatedImageIds } from "./translations";
 import { inlineImageIds } from "./rich-text";
 import type { ContentEntry, EntryDocument } from "./entries";
 import type { PublicationIntent } from "./publication";
@@ -43,6 +44,7 @@ export function imageIds(content: ContentEntry | null): string[] {
             content.cover?.id,
             ...content.gallery.map((image) => image.id),
             ...inlineImageIds(content.body, content.bodyFormat),
+            ...translatedImageIds(content),
           ].filter(Boolean) as string[],
         ),
       ]

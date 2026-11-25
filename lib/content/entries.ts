@@ -1,10 +1,11 @@
+import { parseTranslations, type Translatable } from "./translations";
 import { SLUG, IMAGE_ID } from "./patterns";
 import { parseBody, hasBodyContent } from "./rich-text";
 import type { BodyFormat } from "./rich-text-format";
 // Version 1 public contract, mirrored in the independent dashboard project.
 export type ContentKind = "events" | "artists";
 export type ContentImage = { id: string; alt: string };
-type CommonContent = {
+type CommonContent = Translatable & {
   slug: string;
   title: string;
   summary: string;
@@ -162,7 +163,9 @@ export function validateEntry(
   };
   if (!Array.isArray(data.gallery) || data.gallery.length > 12)
     return fail("Máximo 12 imágenes en la galería.");
+  const translations = parseTranslations(data.translations);
   const common = {
+    ...(translations ? { translations } : {}),
     slug,
     title,
     summary: text("summary", 1000),

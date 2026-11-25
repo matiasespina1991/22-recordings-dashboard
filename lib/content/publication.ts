@@ -1,3 +1,4 @@
+import { translatedImageIds } from "./translations";
 import { inlineImageIds } from "./rich-text";
 import type { AboutContent, AboutDocument } from "./types";
 import { EditorialError } from "./validation";
@@ -45,6 +46,7 @@ export function aboutImageIds(content: AboutContent | null): string[] {
           [
             content.imageId,
             ...inlineImageIds(content.body, content.bodyFormat),
+            ...translatedImageIds(content),
           ].filter(Boolean) as string[],
         ),
       ]

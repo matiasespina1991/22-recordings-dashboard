@@ -1,3 +1,5 @@
+import { localizeContent } from "lib/content/translations";
+import type { AboutContent } from "lib/content/types";
 import { NextResponse } from "next/server";
 import { editorialDb, editorialConfigured } from "lib/content/firebase-admin";
 import { getPublishedAbout } from "lib/content/repository";
@@ -16,14 +18,25 @@ export async function GET(request: Request) {
         { error: "Content service is not configured" },
         { status: 503 },
       );
+    const locale = new URL(request.url).searchParams.get("locale") || "es";
+    if (!["es", "en"].includes(locale))
+      return NextResponse.json(
+        { error: "Unsupported locale" },
+        { status: 400 },
+      );
     const origin = process.env.DASHBOARD_ORIGIN || new URL(request.url).origin;
     const db = editorialDb();
-    const [about, artists, events, contact] = await Promise.all([
+    const [originalAbout, artists, events, contact] = await Promise.all([
       getPublishedAbout(),
       db.collection("published_artists").get(),
       db.collection("published_events").get(),
       db.collection("content_pages").doc("contact").get(),
     ]);
+    const about = originalAbout ? localizeContent(originalAbout, locale) : null;
+    const originalContact = contact.data()?.published as AboutContent | null;
+    const localizedContact = originalContact
+      ? localizeContent(originalContact, locale)
+      : null;
     const image = (photo: { id: string; alt: string }) => ({
       ...photo,
       url: `${origin}/api/media/${photo.id}`,
@@ -33,7 +46,13 @@ export async function GET(request: Request) {
         schemaVersion: 1,
         content: {
           revision: 0,
-          contact: contact.data()?.published || null,
+          contact: localizedContact
+            ? {
+                title: localizedContact.title,
+                body: localizedContact.body,
+                bodyFormat: localizedContact.bodyFormat,
+              }
+            : null,
           about: about
             ? {
                 title: about.title,
@@ -51,7 +70,9 @@ export async function GET(request: Request) {
               }
             : null,
           artists: artists.docs
-            .map((doc) => doc.data().content as ArtistContent)
+            .map((doc) =>
+              localizeContent(doc.data().content as ArtistContent, locale),
+            )
             .sort(
               (a, b) =>
                 a.rosterOrder - b.rosterOrder || a.slug.localeCompare(b.slug),
@@ -74,7 +95,9 @@ export async function GET(request: Request) {
               published: true,
             })),
           events: events.docs
-            .map((doc) => doc.data().content as EventContent)
+            .map((doc) =>
+              localizeContent(doc.data().content as EventContent, locale),
+            )
             .map((e) => ({
               slug: e.slug,
               title: e.title,
